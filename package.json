@@ -1,0 +1,13 @@
+{
+  "name": "fah-console",
+  "version": "0.0.1",
+  "repository": "https://github.com/Folding@home/fah-console",
+  "email": "joseph@cauldrondevelopment.com",
+  "private": true,
+  "devDependencies": {
+    "pug-cli": "",
+    "jstransformer-stylus": "",
+    "jstransformer-browserify": "",
+    "jshint": ""
+  }
+}

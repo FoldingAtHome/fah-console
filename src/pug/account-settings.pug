@@ -1,0 +1,61 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#account-settings-template(type="text/x-template")
+  .modal
+    .modal-header
+      h2 Account Settings
+
+    .modal-content
+      table
+        tr
+          th Avatar
+          td: img.avatar(:src="account.avatar")
+        tr
+          th Name
+          td: input(v-model="account.name")
+        tr
+          th Team
+          td: input(v-model="account.team", type="number")
+        tr(v-if="account.token")
+          th Token
+          td {{token}}
+          td.actions
+            .fa(@click="show_token = !show_token", title="Show secret token.",
+              :class="'fa-eye' + (show_token ? '-slash' : '')")
+            .fa.fa-clipboard(@click="copy_token",
+              title="Copy secret token to clipboard.")
+
+    .modal-footer
+      button(@click="$emit('close')")
+        .fa.fa-times
+        | Cancel
+
+      button(@click="$emit('save')")
+        .fa.fa-floppy-o
+        | Save

@@ -1,0 +1,71 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#project-view-template(type="text/x-template")
+  #project.modal
+    .modal-header
+
+    .modal-content
+      .project-sidebar
+        h2 Project {{id}} {{project.cause}}
+        .manager
+          img(:src="'data:image/png;base64, ' + project.mthumb")
+          .name {{project.manager}}
+          .institution {{project.minstitution}}
+
+        p.description(v-html="project.description")
+
+      .visual
+        .message {{message}}
+
+    .modal-footer
+      .controls
+        .control Frame {{frame}}
+        .control
+          | View
+          each type in [1, 2, 3]
+            button(@click=`set_draw_type(${type})`,
+              :disabled=`draw_type == ${type}`) #{type}
+
+        .control
+          | Zoom
+          button(@click="zoom_in", title="Zoom in"): .fa.fa-minus
+          button(@click="zoom_out", title="Zoom out"): .fa.fa-plus
+
+        .control
+          | Rotation
+          button(@click="pause_rotation = !pause_rotation")
+            .fa(:class="pause_rotation ? 'fa-play' : 'fa-pause'")
+          button(@click="rotate(-10)", title="Rotate left",
+            :disabled="!pause_rotation"): .fa.fa-minus
+          button(@click="rotate(10)", title="Rotate right",
+            :disabled="!pause_rotation"): .fa.fa-plus
+
+      button(@click="$emit('close')")
+        .fa.fa-times
+        | Close

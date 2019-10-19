@@ -1,0 +1,95 @@
+/******************************************************************************\
+
+                 This file is part of the Folding@home Client.
+
+           The Folding@home Client runs protein folding simulations.
+                   Copyright (c) 2001-2019, foldingathome.org
+                              All rights reserved.
+
+      This program is free software; you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+       the Free Software Foundation; either version 2 of the License, or
+                      (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                  GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+          51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+                 For information regarding this software email:
+                                Joseph Coffland
+                         joseph@cauldrondevelopment.com
+
+\******************************************************************************/
+
+.sidebar.left
+  .fa-cog
+    float right
+    margin 0.125em
+    cursor pointer
+
+    &:hover
+      color highlight
+
+  div.account, div.team
+    clear both
+    margin-bottom 15px
+    text-align center
+    padding 5px
+
+    .name
+      width 100%
+      white-space nowrap
+      overflow hidden
+      text-overflow ellipsis
+
+    td
+      text-align right
+      text-overflow ellipsis
+      overflow hidden
+      max-width 90px
+
+      &.active
+        color highlight
+
+    .avatar, .logo
+      width 64px
+      margin 5px auto
+
+      img
+        width 64px
+        height 64px
+        border-radius 4px
+
+      .fa
+        font-size 64px
+
+.sidebar.right
+  > div
+    position relative
+    width 270px
+    margin-bottom 10px
+    overflow-x hidden
+
+  table
+    font-size 80%
+
+  th, td
+    &.points, &.wus, &.cpus, &.gpus, &.last, &.time, &.project
+      text-align right
+
+    &.bonus, &.os, &.active
+      text-align center
+
+    &.project
+      cursor pointer
+
+      &:hover
+        text-decoration underline
+
+  td.highlight
+    color highlight

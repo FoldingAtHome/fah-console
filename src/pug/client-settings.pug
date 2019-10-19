@@ -1,0 +1,73 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#client-settings-template(type="text/x-template")
+  .client-settings.modal
+    .modal-header
+    .modal-content
+      h2 When to Run
+      table
+        tr
+          input(type="radio", value="false", v-model="config.on_idle")
+          label While I'm working
+        tr
+          input(type="radio", value="true", v-model="config.on_idle")
+          label Only when idle
+
+      h2 Preferred Cause
+      - var causes = 'Any Alzheimers Cancer Huntingtons Parkinsons'.split(' ')
+      select(v-model="config.cause")
+        each cause in causes
+          option(value=cause.toLowerCase())= cause
+
+      h2 Max CPUs
+      input(type="number", min=1, :max="info.cpus", v-model="config.cpus")
+
+      h2 Advanced Options
+      input.options(v-model="config.options")
+
+      h2 GPUs
+      table.gpus
+        tr
+          th GPU
+          th Enable
+          th Advanced
+
+        tr(v-for="(gpu, id) in config.gpus")
+          th {{info.gpus[id].description}}
+          td: input(type="checkbox", v-model="gpu.enabled")
+          td.options: input(v-model="gpu.options")
+
+    .modal-footer
+      button(@click="$emit('close')")
+        .fa.fa-times
+        | Cancel
+
+      button(@click="$emit('save')")
+        .fa.fa-floppy-o
+        | Save

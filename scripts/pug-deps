@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+
+'use strict';
+
+
+var _          = require('lodash')
+var fs         = require('fs')
+var path       = require('path')
+var pugLexer   = require('pug-lexer')
+var pugParser  = require('pug-parser')
+var pugWalk    = require('pug-walk')
+try {var stylus     = require('stylus')} catch (e) {}
+
+try {
+  var through    = require('through2')
+  var browserify = require('browserify')
+} catch (e) {}
+
+
+var deps = [];
+var cwd = process.cwd() + '/';
+
+
+function emit_dep(filename) {
+  if (filename.startsWith(cwd)) filename = filename.substr(cwd.length);
+  if (_.indexOf(deps, filename) != -1) return false;
+
+  if (deps.length) process.stdout.write(' ');
+  process.stdout.write(filename);
+  deps.push(filename);
+
+  return true;
+}
+
+
+function browserify_deps(filename) {
+  var b = browserify({entries: [filename]});
+
+  b.pipeline.get('deps').push(through.obj(function (row, enc, next) {
+    emit_dep(row.file || row.id);
+    next();
+  }))
+
+  b.bundle();
+}
+
+
+function stylus_deps(filename) {
+  stylus(fs.readFileSync(filename, 'utf8'))
+    .set('filename', filename)
+    .deps()
+    .map(emit_dep);
+}
+
+
+function pug_deps(filename) {
+  fs.existsSync(filename);
+  var contents = fs.readFileSync(filename, 'utf8');
+  var dirname  = path.dirname(filename);
+  var lex      = pugLexer(contents, {filename: filename});
+
+  pugWalk(pugParser(lex), function(node) {
+    if (['Include', 'RawInclude', 'Extends'].indexOf(node.type) == -1) return;
+    var dep = path.join(dirname, node.file.path);
+
+    if (!emit_dep(dep) || typeof node.filters == 'undefined') return;
+
+    node.filters.map(function (filter) {
+      if (filter.name == 'browserify') browserify_deps(dep);
+      else if (filter.name == 'stylus') stylus_deps(dep);
+    })
+  });
+
+  return deps;
+}
+
+
+process.argv.slice(2).map(pug_deps)
