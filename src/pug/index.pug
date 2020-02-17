@@ -29,172 +29,66 @@ html(lang="en")
     title Folding@home Console
     meta(charset="utf-8")
 
-    - var cdn = "https://cdnjs.cloudflare.com/ajax/libs"
-    link(rel="stylesheet", type="text/css",
-      href=cdn + "/font-awesome/4.7.0/css/font-awesome.min.css")
-    link(rel="stylesheet", type="text/css",
-      href=cdn + "/jquery.perfect-scrollbar/1.4.0/css/perfect-scrollbar.css")
+    link(rel="stylesheet", type="text/css", href="css/font-awesome.min.css")
 
     - var base = "https://fonts.googleapis.com/css";
     link(href=base + "?family=Inconsolata", rel="stylesheet")
 
-    script(src=cdn + "/jquery/3.1.1/jquery.min.js")
-    script(src=cdn + "/vue/2.5.16/vue.min.js")
-    script(src=cdn + "/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js")
-    script(src=cdn + "/moment.js/2.24.0/moment.min.js")
-    script(src=cdn + "/Chart.js/2.8.0/Chart.min.js")
-    script(src=cdn + "/three.js/98/three.js")
+    script(src="js/jquery.min.js")
+    script(src="js/vue.min.js")
+    script(src="js/vue-router.min.js")
+    script(src="js/moment.min.js")
+    script(src="js/Chart.min.js")
+    script(src="js/three.min.js")
 
     style: include:stylus ../styl/main.styl
     script: include:browserify ../js/main.js
 
   body
-    #page(v-cloak)
-      #header
-        .menu(v-if="!loading")
-          .item(v-if="logged_in", @click="logout", title="Logout")
-            | Logout
-            .fa.fa-sign-out
+    #app(v-cloak, v-if="typeof account != 'undefined'")
+      #header(v-cloak)
+        .header-nav(v-if="logged_in")
+          img.avatar(:src="account.avatar")
+          .nav-notch
+          router-link(:to="'/account/' + account.id") #[.fa.fa-user] Account
+          router-link(:to="'/team/' + account.team") #[.fa.fa-users] Team
+          router-link(to="/account/settings") #[.fa.fa-cog] Settings
+          a(@click="logout()") #[.fa.fa-sign-out] Logout
 
-          .item(v-else, @click="login", title="Login")
-            | Login
-            .fa.fa-sign-in
+        router-link.logo(to="/") Folding#[span @]home Console {{route}}
 
-        .logo
-          a(href="https://foldingathome.org/", target="_blank")
-            | Folding#[span @]home
-          | &nbsp;Console
+      router-view#view
 
-      .sidebar.left
-        .fa.fa-cog(v-if="logged_in", @click="open_dialog('settings')",
-          title="Account settings")
+    noscript
+      h1 This Web app requires Javascript.
+      p.
+        We appologize for the inconvenience but you must
+        #[a(href="http://enable-javascript.com/") enable Javascript] to use this
+        Web app.
 
-        h2 Account
-        .account
-          .content
-            .name {{account.name || 'Anonymous'}}
-            .avatar
-              img(v-if="account.avatar", :src="account.avatar")
-              .fa.fa-user(v-else)
-
-            table
-              tr
-                th.points Points
-                td.points {{account.credit | number}}
-              tr
-                th.wus Assigned
-                td.wus {{account.assigned | number}}
-              tr
-                th.wus Confirmed
-                td.wus {{account.confirmed | number}}
-              tr
-                th.wus Failed
-                td.wus {{account.failed | number}}
-              tr
-                th.wus Faulty
-                td.wus {{account.faulty | number}}
-              tr
-                th.wus Dumped
-                td.wus {{account.dumped | number}}
-              tr
-                th.wus Finished
-                td.wus {{account.finished | number}}
-              tr
-                th.wus Completion
-                td.wus {{account.finished / account.assigned | percent}}
-
-        h2 Team
-        .team(v-if="account.team")
-          .content
-            .name {{account.team.name || 'Anonymous'}}
-            .logo
-              a(:href="account.team.url", target="_blank")
-                img(:src="account.team.logo || default_team_logo")
-
-            table
-              tr
-                th.team Team
-                td.team {{account.team.id || 0}}
-              tr
-                th.rank Rank
-                td.rank {{account.team.rank | number}}
-              tr
-                th.points Points
-                td.points {{account.team.score | number}}
-              tr
-                th.wus WUs
-                td.wus {{account.team.wus | number}}
-              tr
-                th.url URL
-                td.url(v-if="account.team.url")
-                  a(:href="account.team.url | href", target="_blank")
-                    | {{account.team.url | url}}
-
-      .sidebar.right
-        h2 Recent Work Units
-        .wus
-          table
-            tr
-              th.project Project
-              th.points Points
-              th.bonus Bonus
-              th.status Status
-              th.time Finished
-
-            tr(v-for="wu in account.wus")
-              td.project(:title="get_prcg(wu)",
-                @click="open_project(wu.project)") {{wu.project}}
-              td.points {{wu.credit | number}}
-              td.bonus(:class="{highlight: wu.bonus}")
-                .fa(:class="'fa-' + (wu.bonus ? 'check' : 'times')")
-              td.status(:title="wu.status")
-                .fa(:class="status_icon(wu.status)")
-              td.time(:title="wu.closed") {{wu.closed | timeduration}}
-
-        h2 Machines
-        .machines
-          table
-            tr
-              th.os OS
-              th.type Type
-              th.version Version
-              th.active Active
-              th.last Last
-
-            tr(v-for="m in account.machines", :class="{active: m.active}")
-              td.os(:title="m.os"): .fa(:class="os_icon(m.os)")
-              td.type {{get_type(m)}}
-              td.version {{m.version}}
-              td.active(:class="{highlight: is_active(m.last)}")
-                .fa(:class="'fa-' + (is_active(m.last) ? 'check' : 'times')")
-              td.last(:title="m.last") {{m.last | timeduration}}
-
-      #content
-        template
-          h2 Folding Clients
-          fah-client(v-for="client in clients", :address="client")
-
-        .series(v-for="s in series")
-          h2 {{s.title}}
-          time-series(:series="s.series")
-
-      account-settings#account-settings(v-if="show.settings",
-        @close="close_dialog('settings')", @save="save_settings",
-        :account="account")
-
-      team-settings#team-settings(v-if="show.team",
-        @close="close_dialog('team')", :team="account.team")
-
-      project-view(v-if="show.project", @close="close_dialog()",
-        :topology="topology", :positions="positions", id="14103")
-
-      include footer.pug
+    #incompatible-browser
+      h1 Incompatable browser.
+      p Your browser is too old to use this Web app.
+      p Please #[a(href="http://whatbrowser.org/") update your browser].
 
     #templates
+      include charts-view.pug
       include project-view.pug
+      include account-view.pug
       include account-settings.pug
       include team-settings.pug
       include fah-client.pug
       include work-unit.pug
       include progress-bar.pug
       include client-settings.pug
+      include line-chart.pug
+      include top-view.pug
+      include top-table.pug
+      include team-view.pug
+      include recent-wus.pug
+      include recent-machines.pug
+      include team-accounts.pug
+      include team-charts.pug
+      include account-charts.pug
+      include main-view.pug
+      include about-view.pug

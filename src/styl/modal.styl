@@ -29,10 +29,14 @@
 .modal
   z-index 110
   position fixed
-  top modal-margin
-  bottom modal-margin
-  left modal-margin
-  right modal-margin
+  top 50%
+  bottom inherit
+  left 50%
+  right inherit
+  width 600px
+  height 540px
+  margin-left -300px
+  margin-top -270px
   background alpha(bg-color, 0.8)
   border 1px solid border-color
   padding 20px
@@ -53,14 +57,12 @@
     bottom 0
 
   &.message
-    top 50%
-    bottom inherit
-    left 50%
-    right inherit
-    width 400px
+    z-index 120
+    width 450px
     height 300px
-    margin-left -200px
+    margin-left -225px
     margin-top -150px
+    background bg-color
 
     .modal-content
       overflow-y auto

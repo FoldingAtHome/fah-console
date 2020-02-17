@@ -60,10 +60,15 @@ function ajax(method, path, action, data, _config) {
         xhr.status in config.statusCode) return;
     if (!xhr.status) return; // Ignore redirects
 
-    var msg;
+    var msg = 'Unknown error';
 
     try {msg = $.parseJSON(xhr.responseText).error}
-    catch(e) {msg = xhr.responseText || 'Unknown error'}
+
+    catch(e) {
+      if (xhr.responseText) msg = xhr.responseText;
+      else if (400 <= xhr.status && xhr.status < 600)
+        msg = util.capitalize(xhr.statusText.replace(/(HTTP)?_/, ''));
+    }
 
     var title;
     if (typeof action != 'undefined') title = action + ' failed';

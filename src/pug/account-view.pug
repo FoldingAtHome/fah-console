@@ -1,0 +1,78 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#account-view-template(type="text/x-template")
+  template
+    .loading(v-if="typeof account == 'undefined'") Loading . . .
+
+    .view.account-view(v-else)
+      .title #[int-input(v-model="aid", min="0")] {{account.name}}
+
+      .content
+        .account-sidebar
+          .avatar
+            img(v-if="account.avatar", :src="account.avatar")
+            .fa.fa-user(v-else)
+
+          table
+            tr
+              th.team Team
+              td.team
+                router-link(:to="'/team/' + account.team") {{account.team}}
+            tr
+              th.points Points
+              td.points {{account.credit | number}}
+            tr
+              th.wus Assigned
+              td.wus {{account.assigned | number}}
+            tr
+              th.wus Confirmed
+              td.wus {{account.confirmed | number}}
+            tr
+              th.wus Failed
+              td.wus {{account.failed | number}}
+            tr
+              th.wus Faulty
+              td.wus {{account.faulty | number}}
+            tr
+              th.wus Dumped
+              td.wus {{account.dumped | number}}
+            tr
+              th.wus Finished
+              td.wus {{account.finished | number}}
+            tr
+              th.wus Return Rate
+              td.wus {{account.finished / account.assigned | percent}}
+
+        .middle
+          .menu
+            router-link(:to="'/account/' + aid + '/charts'") Charts
+            router-link(:to="'/account/' + aid + '/wus'") WUs
+            router-link(:to="'/account/' + aid + '/machines'") Machines
+
+          router-view

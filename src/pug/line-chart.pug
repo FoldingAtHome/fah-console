@@ -1,0 +1,53 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#line-chart-template(type="text/x-template")
+  .line-chart.chart(:class="series")
+    .loading(v-if="!ts.meta") Loading . . .
+
+    canvas
+
+    .chart-legend(v-if="ts.meta && typeof id == 'undefined'")
+      .subtitle Chart Legend
+      table
+        thead
+          tr
+            th Show
+            th.id ID
+            th.name Name
+
+        tbody
+          tr(v-for="e in ts.meta", :class="{disabled: !e.enabled}",
+            @click="link(e)")
+            td.show(:style="{background: e.color}", @click.stop="e.toggle()",
+              title="Click to toggle display")
+              .fa(:class="'fa-' + (e.enabled ? 'check' : 'times')")
+            td.id {{e.id}}
+            td.name
+              img.avatar(v-if="e.avatar", :src="e.avatar")
+              | {{e.name}}

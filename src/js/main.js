@@ -33,8 +33,18 @@ $(function () {
 
   require('./filters')();
 
-  Vue.component('progress-bar', require('./progress-bar'));
-  Vue.component('project-view', require('./project-view'));
+  Vue.component('progress-bar',      require('./progress-bar'));
+  Vue.component('project-view',      require('./project-view'));
+  Vue.component('time-series',       require('./time-series'));
+  Vue.component('line-chart',        require('./line-chart'));
+  Vue.component('top-table',         require('./top-table'));
+  Vue.component('recent-wus',        require('./recent-wus'));
+  Vue.component('recent-machines',   require('./recent-machines'));
+  Vue.component('team-accounts',     require('./team-accounts'));
+  Vue.component('int-input',         require('./int-input'));
+  Vue.component('team-input',        require('./team-input'));
+  Vue.component('team-charts',       require('./team-charts'));
+  Vue.component('field-description', require('./field-description'));
 
-  new Vue(require('./app'));
+  new Vue(require('./app')).$mount('#app')
 })

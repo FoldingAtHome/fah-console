@@ -31,5 +31,14 @@
 
 module.exports = {
   template: '#progress-bar-template',
-  props: ['progress', 'prefix']
+  props: ['progress', 'prefix'],
+
+
+  computed: {
+    width: function () {
+      var progress = this.progress || 0;
+      if (1 < progress) progress = 1;
+      return (progress * 100).toFixed(2) + '%';
+    }
+  }
 }

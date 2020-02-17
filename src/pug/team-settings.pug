@@ -37,7 +37,7 @@ script#team-settings-template(type="text/x-template")
           td: img.logo(:src="team.logo")
         tr
           th ID
-          td: input(v-model="team.id", type="number")
+          td: team-input(v-model="team.id")
         tr
           th Name
           td: input(v-model="team.name")

@@ -18,5 +18,5 @@
 
 script#progress-bar-template(type="text/x-template")
   .progress-bar
-    .bar(:style="{width: ((progress || 0) * 100) + '%'}")
+    .bar(:style="{width: width}")
       .text {{prefix}}{{progress || 0 | percent}}

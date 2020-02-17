@@ -29,31 +29,72 @@
 'use strict'
 
 var util = require('./util');
+var api = require('./api');
 
 
 module.exports = {
   template: '#account-settings-template',
-  props: ['account'],
 
 
   data: function () {
     return {
-      show_token: false
+      register: false,
+      show_passkey: false,
+      show_token: false,
+      avatar: '',
+      name: '',
+      team: 0,
+      passkey: ''
     }
   },
 
 
+  mounted: function () {
+    this.register = this.$route.path == '/account/register';
+    this.avatar   = this.account.avatar;
+    this.name     = this.account.name;
+    this.team     = this.account.team;
+    this.passkey  = this.account.passkey || '';
+  },
+
+
   computed: {
-    token: function () {
-      if (this.show_token) return this.account.token;
-      return '*'.repeat(this.account.token.length);
+    account: function () {return this.$root.account},
+
+
+    valid: function () {
+      return /^([A-Fa-f0-9]{30,32}|)$/.test(this.passkey) &&
+        1 < this.name.length && this.name.length < 101 &&
+        /^\d+$/.test(this.team);
     }
   },
 
 
   methods: {
-    copy_token: function () {
-      util.copy_to_clipboard(this.account.token);
+    copy_token: function () {util.copy_to_clipboard(this.account.token)},
+
+
+    save: function () {
+      // TODO validate args
+
+      var data = {
+        name:    this.name,
+        avatar:  this.avatar,
+        team:    this.team,
+        passkey: this.passkey || undefined
+      }
+
+      api.put('/account', 'Saving account settings', data)
+        .done(function () {
+          for (var name in data) this.account[name] = data[name];
+          this.$router.push('/');
+        }.bind(this));
+    },
+
+
+    cancel: function () {
+      if (this.register) this.$root.logout();
+      else this.$router.push('/');
     }
   }
 }

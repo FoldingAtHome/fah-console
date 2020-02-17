@@ -36,7 +36,6 @@ body
   font-family 'Inconsolata', sans-serif
   background bg-color
   color text-color
-  padding 5px
 
 :focus
   outline none
@@ -72,7 +71,10 @@ input, select
   color text-color
   border solid 1px darken(border-color, 20%)
   padding 0.25em 0.5em
-  outline noen
+  outline none
+
+  &:invalid, &.invalid
+    border solid 1px red
 
 table
   width 100%
@@ -81,9 +83,6 @@ table
   td, th
     text-align left
     white-space nowrap
-
-    &:not(:last-child)
-      padding-right 0.25em
 
 button
   padding 5px 10px
@@ -94,12 +93,14 @@ button
   border-radius 0
   cursor pointer
   text-align center
+  border 1px solid border-color
 
   &:hover
     background-color lighten(bg-color, 30%)
 
   &:disabled
-    color darken(text-color, 20%)
+    background-color lighten(bg-color, 15%)
+    color darken(text-color, 60%)
     cursor inherit
 
   .fa
@@ -127,3 +128,13 @@ button
 
   &.warning
     color orange
+
+.ps
+  .ps__rail-x, .ps__rail-y
+    &:hover, &:focus, &.ps--clicking
+      background-color transparent
+
+.ps__rail-y, .ps__rail-x
+  &:hover, &:focus, &.ps--clicking
+    > .ps__thumb-y, > .ps__thumb-x
+      width 6px

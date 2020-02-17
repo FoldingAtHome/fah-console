@@ -28,31 +28,40 @@
 
 'use strict'
 
-var util = require('./util');
-
 
 module.exports = {
-  data: function () {return {show: {}}},
+  data: function () {
+    return {show: {}}
+  },
 
 
   methods: {
+    close_overlay: function () {
+      if (typeof this.overlay == 'undefined') return;
+      this.overlay.remove();
+      this.overlay = undefined;
+    },
+
+
+    create_overlay: function () {
+      if (typeof this.overlay != 'undefined') return;
+
+      this.overlay = $('<div>')
+        .attr('class', 'overlay')
+        .appendTo(this.$el.parentNode || document.body);
+    },
+
+
     open_dialog: function (name) {
       this.$set(this.show, name, true);
-
-      if (typeof this.overlay != 'undefined') return;
-      var close = function() {this.close_dialog(name)}.bind(this);
-      this.overlay = util.overlay_create(this.$el.parentNode, close);
+      this.create_overlay();
     },
 
 
     close_dialog: function (name) {
       if (typeof name == 'undefined') this.show = {};
       else this.$set(this.show, name, false);
-
-      if (typeof this.overlay != 'undefined') {
-        this.overlay.close_overlay();
-        this.overlay = undefined;
-      }
+      this.close_overlay();
     }
   }
 }

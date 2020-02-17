@@ -27,35 +27,54 @@
 //-/////////////////////////////////////////////////////////////////////////////
 
 script#account-settings-template(type="text/x-template")
-  .modal
-    .modal-header
-      h2 Account Settings
+  .view.account-settings-view(v-if="$root.logged_in")
+    template(v-if="register")
+      p.
+        Welcome to the Folding@home Web Console where you can track your
+        contributions to disease research better than ever.
 
-    .modal-content
-      table
-        tr
-          th Avatar
-          td: img.avatar(:src="account.avatar")
-        tr
-          th Name
-          td: input(v-model="account.name")
-        tr
-          th Team
-          td: input(v-model="account.team", type="number")
-        tr(v-if="account.token")
-          th Token
-          td {{token}}
-          td.actions
-            .fa(@click="show_token = !show_token", title="Show secret token.",
-              :class="'fa-eye' + (show_token ? '-slash' : '')")
-            .fa.fa-clipboard(@click="copy_token",
-              title="Copy secret token to clipboard.")
+      p.
+        Enter your team number and passkey, if you have them, then click the
+        "Register" button below to get started.  These settings can be changed
+        later at anytime.
 
-    .modal-footer
-      button(@click="$emit('close')")
-        .fa.fa-times
-        | Cancel
 
-      button(@click="$emit('save')")
-        .fa.fa-floppy-o
-        | Save
+    form
+      label Avatar
+      img.avatar(:src="avatar")
+      .actions
+
+      label Name
+      input(v-model="name")
+      .actions
+
+      label Team (optional)
+      team-input(v-model="team", v-ref:team)
+      .actions
+
+      label Passkey (optional)
+      .passkey
+        input(v-model="passkey", pattern="[A-Fa-f0-9]{30,32}",
+          :type="show_passkey ? '' : 'password'")
+      .actions
+        .fa(@click="show_passkey = !show_passkey", title="Show passkey.",
+          :class="'fa-eye' + (show_passkey ? '' : '-slash')")
+
+      template(v-if="account.token && false")
+        label Token
+        input(v-model="account.token", :type="show_token ? '' : 'password'",
+          readonly)
+        .actions
+          .fa(@click="show_token = !show_token", title="Show secret token.",
+            :class="'fa-eye' + (show_token ? '' : '-slash')")
+          .fa.fa-clipboard(@click="copy_token",
+            title="Copy secret token to clipboard.")
+
+      .skip
+      .buttons
+        button(@click="cancel")
+          | #[.fa.fa-times] {{register ? 'Logout' : 'Cancel'}}
+
+        button(@click="save", :disabled="!valid")
+          | #[.fa.fa-floppy-o] {{register ? 'Register' : 'Save'}}
+      .skip

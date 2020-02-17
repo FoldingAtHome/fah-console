@@ -1,0 +1,68 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#account-register-template(type="text/x-template")
+  .modal
+    .modal-header
+      h2 Register New Account
+
+    .modal-content
+      p.
+        Welcome to the Folding@home Web Console where you can track your
+        contributions to disease research better than ever.
+
+      p.
+        Enter your team number and passkey, if you have them, then click the
+        "Register" button below to get started.  These settings can be changed
+        later at anytime.
+
+      table
+        tr
+          th Avatar
+          td: img.avatar(:src="account.avatar")
+
+        tr
+          th Name
+          td: input(v-model="account.name")
+
+        tr
+          th Team (optional)
+          td: team-input(v-model="account.team")
+
+        tr
+          th Passkey (optional)
+          td: input(v-model="account.passkey", pattern="[A-Fa-f0-9]{30,32}")
+
+    .modal-footer
+      button(@click="$emit('logout')")
+        .fa.fa-sign-out
+        | Logout
+
+      button(@click="$emit('save')")
+        .fa.fa-user-plus
+        | Register

@@ -26,12 +26,19 @@
 
 \******************************************************************************/
 
-#content, .sidebar
-  padding 10px
-  margin 5px
-  position fixed
-  top header-height
-  bottom 5px
+body
+  padding 1em 2em
+  margin 0
+  width 100vw
+  height 100vh
+  overflow-x hidden
+
+#app
+  display flex
+  flex-direction column
+
+.view
+  flex 1
 
 .sidebar
   overflow-x hidden
@@ -40,17 +47,6 @@
 
   &.left
     width left-sidebar-width
-    left 0
 
   &.right
     width right-sidebar-width
-    right 0
-
-#header
-  height header-height
-
-#content
-  top header-height
-  left left-sidebar-width + 20px
-  right right-sidebar-width + 20px
-  overflow-y auto

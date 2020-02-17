@@ -29,7 +29,7 @@ var util = require('./util')
 var api  = require('./api')
 
 
-function get_redirect() {return location.href.replace(/\/?#.*$/, '')}
+function get_redirect() {return location.href.replace(/[#?].*$/, '')}
 
 
 module.exports = {

@@ -28,79 +28,47 @@
 
 'use strict'
 
-/* globals PerfectScrollbar */
-
 var login   = require('./login');
 var api     = require('./api');
-var message = require('./message');
-var util = require('./util');
-
-var fah_url  = 'https://foldingathome.org/'
-var fah_logo = fah_url + 'logo.png'
-
-
-function get_series(series, cb) {
-  var data = [];
-
-  for (var i = 0; i < series.length; i++)
-    data.push({
-      x: series[i].ts + 'Z',
-      y: cb(series[i])
-    });
-
-  return data;
-}
 
 
 module.exports = {
-  el: '#page',
-  mixins: [require('./dialogs.js')],
+  router: require('./router'),
 
 
   data: function ()  {
     return {
-      aid: util.query_get('aid', 5796),
       loading: true,
       logged_in: false,
-      default_team_logo: fah_logo,
-      clients: ['127.0.0.1:7397'],
-      account: {}
+      account: undefined,
+      clients: ['127.0.0.1:7397']
     }
   },
 
 
   components: {
-    'fah-client':       require('./fah-client'),
-    'account-settings': require('./account-settings'),
-    'team-settings':    require('./team-settings'),
-    'time-series':      require('./time-series')
+    'fah-client': require('./fah-client')
   },
 
 
   computed: {
-    series: function () {
-      return [
-        this.get_hourly_series_field('credit'),
-        this.get_hourly_series_field('rank'),
-        this.get_hourly_series_return_rate(),
-        this.get_hourly_series_field('assigned'),
-        this.get_hourly_series_field('confirmed'),
-        this.get_hourly_series_field('failed'),
-        this.get_hourly_series_field('faulty'),
-        this.get_hourly_series_field('dumped'),
-        this.get_hourly_series_field('expired'),
-        this.get_hourly_series_field('finished'),
-      ]
+    route: function () {
+      var parts = this.$route.path.split('/');
+      var s = '';
+
+      for (var i = 1; i < parts.length && !/^\d*$/.test(parts[i]); i++) {
+        if (!s.length) s = '-';
+        s += ' ' + parts[i];
+        break;
+      }
+
+      return s;
     }
   },
 
 
   mounted: function () {
-    $('#content').each(function () {new PerfectScrollbar(this)})
-    //$('.sidebar.right > div').each(function () {new PerfectScrollbar(this)})
-    //login.check(this._logged_in, this._logged_out);
-
-    this.account_load(this.aid); // TODO get aid from login
+    login.check(this._logged_in, this._logged_out);
   },
 
 
@@ -109,136 +77,45 @@ module.exports = {
       this.loading = false;
       this.info = info;
       this.logged_in = true;
-      this.account_load(info.uid);
+      this.account_login();
     },
 
 
     _logged_out: function () {
       this.loading = false;
       this.logged_in = false;
-      this.user = {};
+      this.account = {};
     },
 
 
     login: function () {login.login()},
-    logout: function () {login.logout().done(this._logged_out)},
 
 
-    account_not_found: function() {
-      this.account.avatar = this.info.avatar;
-      this.account.name = this.info.name;
-      this.open_dialog('settings');
+    logout: function () {
+      login.logout().done(function () {
+        this.account = {}
+        this.logged_in = false;
+        this.$router.push('/');
+      }.bind(this))
     },
 
 
-    account_set: function (account) {this.account = account},
-
-
-    account_load: function (uid) {
-      api.get('/accounts/' + uid, 'Account lookup', {
-        statusCode: {404: this.account_not_found}})
-        .done(this.account_set)
-    },
-
-
-    get_hourly_series: function(title, cb) {
-      var user = this.account.hourly || [];
-      var team = this.account.team_hourly || [];
-
-      return {
-        title: title,
-        series: [
-          {
-            label: 'User ' + title,
-            period: 'hour',
-            color: '#62858c',
-            position: 'left',
-            data: get_series(user, cb)
-
-          }, {
-            label: 'Team ' + title,
-            period: 'hour',
-            color: 'green',
-            position: 'right',
-            data: get_series(team, cb)
-          }
-        ]
-      }
-    },
-
-
-    get_hourly_series_field: function(field) {
-      return this.get_hourly_series(field, function (e) {return e[field]})
-    },
-
-
-    get_hourly_series_return_rate: function() {
-      function cb (e) {return e.finished / e.assigned * 100}
-      return this.get_hourly_series('return rate', cb)
-    },
-
-
-    os_icon: function (os) {
-      if (typeof os != 'undefined') {
-        os = os.toLowerCase();
-        if (os == 'linux')   return 'fa-linux';
-        if (os == 'windows') return 'fa-windows';
-        if (os == 'macosx')  return 'fa-apple';
+    not_found: function() {
+      this.account = {
+        avatar: this.info.avatar,
+        name: this.info.name,
+        team: 0,
+        passkey: ''
       }
 
-      return 'fa-question';
+      if (this.$route.path != '/account/register')
+        this.$router.push('/account/register');
     },
 
 
-    status_icon: function (status) {
-      if (typeof status != 'undefined') {
-        if (status == 'ok')       return 'fa-check success';
-        if (status == 'failed')   return 'fa-times';
-        if (status == 'faulty')   return 'fa-times';
-        if (status == 'dumped')   return 'fa-trash';
-        if (status == 'noassign') return 'fa-times-circle';
-        if (status == 'expired')  return 'fa-clock-o';
-      }
-
-      return 'fa-question';
-    },
-
-
-    get_prcg: function (wu) {
-      return 'Project:' + wu.project + ' Run:' + wu.run + ' Clone:' + wu.clone +
-        ' Generation:' + wu.gen;
-    },
-
-
-    is_active: function (time) {
-      return new Date().getTime() -  Date.parse(time + 'Z') <
-        50 * 24 * 60 * 60 * 1000;
-    },
-
-
-    save_settings: function () {
-      var data = {
-        name:   this.account.name,
-        avatar: this.account.avatar,
-        team:   this.account.team
-      }
-
-      api.put('/accounts/' + this.info.uid, 'Saving account settings', data)
-        .done(function () {this.close_dialog('settings')}.bind(this));
-    },
-
-
-    get_type: function (m) {
-      if (m.gpus) return m.gpu_vendor;
-      return 'cpu:' + m.cpus;
-    },
-
-
-    show_project: function (project, topology, positions) {
-      this.project_id = project;
-      this.topology = topology;
-      this.positions = positions;
-      this.open_dialog('project');
+    account_login: function () {
+      api.get('/account', 'Account login', {statusCode: {404: this.not_found}})
+        .done(function (data) {this.account = data}.bind(this))
     }
   }
 }

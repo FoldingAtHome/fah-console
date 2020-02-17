@@ -1,0 +1,57 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#top-view-template(type="text/x-template")
+  .view.top-view
+    .menu
+      router-link(to="/top/team") Teams
+      router-link(to="/top/account") Accounts
+      router-link(to="/top/project") Projects
+      router-link(to="/top/os") OS
+      router-link(to="/top/gpu") GPUs
+      router-link(to="/top/core") Cores
+      router-link(to="/top/version") Versions
+
+    .title {{period}} Top {{series_description}} sorted by {{sort_description}}
+
+    .query-options
+      span(title="Data time period")
+        label Period
+        select(v-model="period")
+          option(v-for="name in enums.periods", :value="name") {{name}}
+
+      span(title="The sort key")
+        label Sort by
+        select(v-model="sort")
+          option(v-for="name in enums.fields", :value="name") {{name}}
+
+      span(title="Maximum number of data points")
+        label Count
+        int-input(v-model="count", min="1", max="200")
+
+    top-table(:series="series", :period="period", :count="count", :sort="sort")

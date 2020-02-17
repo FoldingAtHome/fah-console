@@ -35,11 +35,8 @@ PUGDEPS   := $(DIR)/scripts/pug-deps
 HTML      := index
 HTML      := $(patsubst %,build/%.html,$(HTML))
 
-STATIC    := favicon.ico
-STATIC    := $(patsubst %,build/%,$(STATIC))
-STATIC    += $(patsubst src/%,build/%,$(wildcard src/fonts/*.ttf))
-STATIC    += $(patsubst src/%,build/%,$(wildcard src/images/*))
-STATIC    += $(patsubst src/%,build/%,$(wildcard src/*.json))
+STATIC    := $(shell find static -type f | grep -v ~)
+STATIC    += $(patsubst static/%,build/%,$(STATIC))
 
 
 all: node_modules $(HTML) $(STATIC) lint
@@ -47,7 +44,7 @@ all: node_modules $(HTML) $(STATIC) lint
 publish: all
 	rsync -rv build/ --exclude dep $(DEST)/
 
-build/%: src/%
+build/%: static/%
 	install -D $< $@
 
 build/%.html: src/pug/%.pug

@@ -1,0 +1,49 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#account-charts-template(type="text/x-template")
+  .account-charts
+    field-description(series="account", :field="field", :period="period")
+
+    .query-options
+      span(title="Data time period")
+        label Period
+        select(v-model="period")
+          option(v-for="name in enums.periods", :value="name") {{name}}
+
+      span(title="The type of data to lookup")
+        label Query
+        select(v-model="field")
+          option(v-for="name in enums.fields", :value="name") {{name}}
+
+      span(title="Maximum number of data points")
+        label Max
+        int-input(v-model="count", min="1", max="200")
+
+    line-chart(:id="account", series="account", :period="period",
+      :count="count", :field="field")

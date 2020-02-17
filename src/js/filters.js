@@ -33,10 +33,15 @@ var util = require('./util');
 
 
 var filters = {
-  timeduration: function (ts) {
+  ago: function (ts) {
     if (typeof ts == 'string') ts = Date.parse(ts + 'Z') / 1000;
 
     return util.human_duration(new Date().getTime() / 1000 - ts) + ' ago';
+  },
+
+
+  duration: function (ts, precision) {
+    return util.human_duration(parseInt(ts), precision)
   },
 
 
@@ -51,13 +56,17 @@ var filters = {
   },
 
 
-  number: function (x) {return util.human_number(x)},
+  locale: function (x) {return parseFloat(x).toLocaleString()},
+  number: function (x, precision) {return util.human_number(x, precision)},
 
 
   url: function (url) {return url.replace(/^\w+:\/\//, '')},
 
 
-  percent: function (x) {return (100 * x).toFixed(2) + '%';},
+  percent: function (x, precision) {
+    if (typeof precision == 'undefined') precision = 1;
+    return (100 * x).toFixed(precision) + '%';
+  },
 
 
   href: function (url) {

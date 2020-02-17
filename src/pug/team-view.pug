@@ -1,0 +1,69 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#team-view-template(type="text/x-template")
+  template
+    .loading(v-if="typeof team == 'undefined'") Loading . . .
+
+    .view.team-view(v-else)
+      .title.
+        #[team-input(v-model="team_id")]
+        #[a(:href="url", target="_blank") {{team.name}}]
+
+      .subtitle.
+        Founded by {{team.founder}}
+
+      .content
+        .team-sidebar
+          .avatar
+            a(:href="url", target="_blank")
+              img(:src="team.logo || default_team_logo")
+
+          table
+            tr(:title="rank_title")
+              th.rank Rank
+              td.rank {{team.rank | locale}}
+
+            tr(:title="points_title")
+              th.points Points
+              td.points {{team.score | number}}
+
+            tr(:title="wus_title")
+              th.wus WUs
+              td.wus {{team.wus | number}}
+
+            tr(:title="members_title")
+              th.members Members
+              td.members {{team.members | number}}
+
+        .middle
+          .menu
+            router-link(:to="'/team/' + team_id + '/charts'") Charts
+            router-link(:to="'/team/' + team_id + '/wus'") WUs
+
+          router-view

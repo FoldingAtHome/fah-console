@@ -36,8 +36,8 @@ var SEC_PER_HOUR  = 60 * 60;
 var SEC_PER_MIN   = 60;
 
 
-function _time_duration(x, name) {
-  x = x.toFixed(0);
+function _time_duration(x, name, precision) {
+  x = x.toFixed(typeof precision == 'undefined' ? 0 : precision);
   return x + ' ' + name + (x == 1 ? '' : 's')
 }
 
@@ -112,22 +112,30 @@ var util = module.exports = {
   },
 
 
-  human_duration: function (x) {
-    if (SEC_PER_YEAR <= x)  return _time_duration(x / SEC_PER_YEAR,  'year');
-    if (SEC_PER_MONTH <= x) return _time_duration(x / SEC_PER_MONTH, 'month');
-    if (SEC_PER_WEEK <= x)  return _time_duration(x / SEC_PER_WEEK,  'week');
-    if (SEC_PER_DAY <= x)   return _time_duration(x / SEC_PER_DAY,   'day');
-    if (SEC_PER_HOUR <= x)  return _time_duration(x / SEC_PER_HOUR,  'hour');
-    if (SEC_PER_MIN <= x)   return _time_duration(x / SEC_PER_MIN,   'min');
-    return _time_duration(x, 'sec');
+  human_duration: function (x, precision) {
+    if (SEC_PER_YEAR <= x)
+      return _time_duration(x / SEC_PER_YEAR,  'year',  precision);
+    if (SEC_PER_MONTH <= x)
+      return _time_duration(x / SEC_PER_MONTH, 'month', precision);
+    if (SEC_PER_WEEK <= x)
+      return _time_duration(x / SEC_PER_WEEK,  'week',  precision);
+    if (SEC_PER_DAY <= x)
+      return _time_duration(x / SEC_PER_DAY,   'day',   precision);
+    if (SEC_PER_HOUR <= x)
+      return _time_duration(x / SEC_PER_HOUR,  'hour',  precision);
+    if (SEC_PER_MIN <= x)
+      return _time_duration(x / SEC_PER_MIN,   'min',   precision);
+    return _time_duration(x, 'sec', precision);
   },
 
 
-  human_number: function (x) {
-    if (1e12 <= x) return (x / 1e12).toFixed(1) + 'T'
-    if (1e9  <= x) return (x / 1e9 ).toFixed(1) + 'B'
-    if (1e6  <= x) return (x / 1e6 ).toFixed(1) + 'M'
-    if (1e3  <= x) return (x / 1e3 ).toFixed(1) + 'K'
+  human_number: function (x, precision) {
+    if (typeof precision == 'undefined') precision = 1;
+
+    if (1e12 <= x) return (x / 1e12).toFixed(precision) + 'T'
+    if (1e9  <= x) return (x / 1e9 ).toFixed(precision) + 'B'
+    if (1e6  <= x) return (x / 1e6 ).toFixed(precision) + 'M'
+    if (1e3  <= x) return (x / 1e3 ).toFixed(precision) + 'K'
     return x;
   },
 
@@ -143,28 +151,40 @@ var util = module.exports = {
   },
 
 
-  overlay_create: function (parent, close) {
-    if (typeof parent == 'undefined') parent = document.body;
+  capitalize: function (s) {
+    if (typeof s !== 'string') return ''
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  },
 
-    var overlay = $('<div>');
 
-    overlay.close_overlay = function () {
-      var closed = false;
-      var e = overlay;
+  os_icon: function (os) {
+    if (typeof os != 'undefined') {
+      os = os.toLowerCase();
+      if (os == 'linux')   return 'fa-linux';
+      if (os == 'windows') return 'fa-windows';
+      if (os == 'macosx')  return 'fa-apple';
+    }
 
-      return function () {
-        if (closed) return;
-        closed = true;
-        e.remove();
-        if (close) close();
-      }
-    }();
+    return 'fa-question';
+  },
 
-    overlay
-      .attr('class', 'overlay')
-      .on('click', overlay.close_overlay)
-      .appendTo(parent);
 
-    return overlay;
+  status_icon: function (status) {
+    if (typeof status != 'undefined') {
+      if (status == 'ok')       return 'fa-check success';
+      if (status == 'failed')   return 'fa-times';
+      if (status == 'faulty')   return 'fa-times';
+      if (status == 'dumped')   return 'fa-trash';
+      if (status == 'noassign') return 'fa-times-circle';
+      if (status == 'expired')  return 'fa-clock-o';
+    }
+
+    return 'fa-question';
+  },
+
+
+  wu_prcg: function (wu) {
+    return 'Project:' + wu.project + ' Run:' + wu.run + ' Clone:' + wu.clone +
+      ' Generation:' + wu.gen;
   }
 }

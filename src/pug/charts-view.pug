@@ -26,16 +26,37 @@
 //-                                                                           //
 //-/////////////////////////////////////////////////////////////////////////////
 
-noscript
-  h1 This Web app requires Javascript.
-  p.
-    We appologize for the inconvenience but you must
-    #[a(href="http://enable-javascript.com/") enable Javascript] to use this
-    Web app.
+script#charts-view-template(type="text/x-template")
+  .view.charts-view
+    .menu
+      router-link(to="/charts/team") Teams
+      router-link(to="/charts/account") Accounts
+      router-link(to="/charts/project") Projects
+      router-link(to="/charts/os") OS
+      router-link(to="/charts/gpu") GPUs
+      router-link(to="/charts/core") Cores
+      router-link(to="/charts/version") Versions
 
-#incompatible-browser
-  h1 Incompatable browser.
-  p.
-    We appologize for the inconvenience but your browser is too old to use this
-    Web app.
-  p Please #[a(href="http://whatbrowser.org/") update your browser].
+    field-description(:series="series", :field="field", :period="period")
+
+    .query-options
+      span(title="Data time period")
+        label Period
+        select(v-model="period")
+          option(v-for="name in enums.periods", :value="name") {{name}}
+
+      span(title="The data type")
+        label Query
+        select(v-model="field")
+          option(v-for="name in enums.fields", :value="name") {{name}}
+
+      span(title="Maximum number of data points")
+        label Max
+        int-input(v-model="count", min="1", max="200")
+
+      span(title="Maximum number top results")
+        label Top
+        int-input(v-model="top", min="1", max="100")
+
+    line-chart(:series="series", :period="period", :count="count", :top="top",
+      :sort="field", :field="field")

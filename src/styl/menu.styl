@@ -26,22 +26,32 @@
 
 \******************************************************************************/
 
-#account-settings, #team-settings
-  .logo, .avatar
-    max-width 128px
-    max-height 128px
-    margin 5px
-    cursor pointer
+@import "config"
 
-    &:hover
-      opacity 0.6
+.menu
+  margin-bottom 20px
+  font-size 0
+  underline()
 
-  table
-    width inherit
+  a
+    display inline-block
+    margin 0 -1px -1px 0
+    font-size 16pt
+    padding 0.25em 0.5em
+    text-transform uppercase
+    border-top-left-radius 6px
+    border-top-right-radius 6px
+    border 1px solid transparent
+    text-shadow 0 0 16px #0ff
 
-    th
-      text-align right
-      vertical-align top
+    &:first-of-type
+      margin-left 6px
 
-    input
-      width 30em
+    &:hover, &.router-link-active
+      text-shadow none
+
+      text-decoration none
+      border 1px solid border-color
+
+    &.router-link-active
+      border-bottom 1px solid #000

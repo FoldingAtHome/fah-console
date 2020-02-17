@@ -1,0 +1,51 @@
+//-/////////////////////////////////////////////////////////////////////////////
+//-                                                                           //
+//-               This file is part of the Folding@home Client.               //
+//-                                                                           //
+//-         The Folding@home Client runs protein folding simulations.         //
+//-                 Copyright (c) 2001-2019, foldingathome.org                //
+//-                            All rights reserved.                           //
+//-                                                                           //
+//-    This program is free software; you can redistribute it and/or modify   //
+//-    it under the terms of the GNU General Public License as published by   //
+//-     the Free Software Foundation; either version 2 of the License, or     //
+//-                    (at your option) any later version.                    //
+//-                                                                           //
+//-      This program is distributed in the hope that it will be useful,      //
+//-       but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       //
+//-                GNU General Public License for more details.               //
+//-                                                                           //
+//-  You should have received a copy of the GNU General Public License along  //
+//-  with this program; if not, write to the Free Software Foundation, Inc.,  //
+//-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.        //
+//-                                                                           //
+//-               For information regarding this software email:              //
+//-                              Joseph Coffland                              //
+//-                       joseph@cauldrondevelopment.com                      //
+//-                                                                           //
+//-/////////////////////////////////////////////////////////////////////////////
+
+script#recent-wus-template(type="text/x-template")
+  .recent-wus
+    .title Recent Work Units
+    .loading(v-if="typeof wus == 'undefined'") Loading . . .
+    .empty(v-else-if="!wus.length") None found.
+    table(v-else)
+      thead
+        tr
+          th.project Project
+          th.points Points
+          th.bonus Bonus
+          th.status Status
+          th.time Finished
+
+      tbody
+        tr(v-for="wu in wus")
+          td.project(:title="wu_prcg(wu)") {{wu.project}}
+          td.points {{wu.credit | number}}
+          td.bonus(:class="{highlight: wu.bonus}")
+            .fa(:class="'fa-' + (wu.bonus ? 'check' : 'times')")
+          td.status(:title="wu.status")
+            .fa(:class="status_icon(wu.status)")
+          td.time(:title="wu.closed") {{wu.closed | ago}}

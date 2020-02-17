@@ -70,7 +70,10 @@ module.exports = {
           label: s.label,
           yAxisID: '_' + i,
           borderColor: s.color,
+          borderJoinStyle: 'round',
           lineTension: 0,
+          pointRadius: 0,
+          pointHitRadius: 3,
           data: s.data
         });
       }

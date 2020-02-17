@@ -1,0 +1,81 @@
+/******************************************************************************\
+
+                 This file is part of the Folding@home Client.
+
+           The Folding@home Client runs protein folding simulations.
+                   Copyright (c) 2001-2019, foldingathome.org
+                              All rights reserved.
+
+      This program is free software; you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+       the Free Software Foundation; either version 2 of the License, or
+                      (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                  GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+          51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+                 For information regarding this software email:
+                                Joseph Coffland
+                         joseph@cauldrondevelopment.com
+
+\******************************************************************************/
+
+table
+  width 100%
+  margin 1em auto
+  border-spacing 0
+
+  td, th
+    padding 0 10px
+    text-align right
+
+  thead tr
+    background #333
+
+  tbody
+    font-size 11pt
+
+    tr:nth-child(odd)
+      background #222
+
+    tr:hover
+      background #444
+
+  .bonus, .status, .active, .os, .type
+    text-align center
+
+  .avatar
+    margin-right 0.5em
+    vertical-align middle
+    width 20px
+    height 20px
+
+  .id
+    width 5em
+
+  .name
+    text-align left
+
+  .return_rate
+    padding 0
+    text-align left
+
+    .progress-bar
+      text-align left
+      font-size 90%
+      border-color #333
+
+      .bar
+        background #a5bbc0
+
+  .disabled
+    text-decoration line-through
+
+    .avatar
+      filter grayscale()
